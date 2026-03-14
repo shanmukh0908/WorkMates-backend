@@ -1,5 +1,5 @@
 const express = require('express');
-const authController = require('../controllers/authcontroller1')
+const authController = require('../controllers/authController')
 const taskController = require('../controllers/taskController');
 const {uploadImages,resizeImage}  = require('../utils/uploadImages')
 
