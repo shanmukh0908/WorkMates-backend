@@ -20,7 +20,8 @@ app.use('/public', express.static(path.join(__dirname,'public')));
 
 const allowedOrigins = [
       "http://localhost:5173", 
-      "http://localhost:5174", 
+      "http://localhost:5174",
+      "https://work-mates.vercel.app", 
        process.env.FRONTEND_URL 
     ];
 

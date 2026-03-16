@@ -1,8 +1,7 @@
 const express = require('express');
 const authController = require('../controllers/authController')
 const taskController = require('../controllers/taskController');
-const {uploadImages,resizeImage}  = require('../utils/uploadImages')
-
+const { getUploadSignature } = require('../utils/getUploadSignature');
 const router = express.Router(); 
 
 // Protect all routes below
@@ -12,9 +11,11 @@ router.use(authController.protect);
 router.route('/within/:distance/center/:latlng')
   .get(taskController.tasksWithInDistance);
 
-router.route('/').get(taskController.getAllTasks).post(uploadImages,resizeImage,taskController.createTask)
+router.route("/cloudinary-signature").get(getUploadSignature)  
 
-router.route('/:id').patch(uploadImages,resizeImage,taskController.updateTask)
+router.route('/').get(taskController.getAllTasks).post(taskController.createTask)
+
+router.route('/:id').patch(taskController.updateTask)
 
 module.exports = router;
 

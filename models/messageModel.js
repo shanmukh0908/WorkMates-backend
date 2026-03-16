@@ -1,6 +1,4 @@
 const mongoose = require('mongoose')
-// const Task = require("./taskModel")
-// const User = require('./userModel')
 
 const messageSchema = new mongoose.Schema(
   {
@@ -41,12 +39,7 @@ const messageSchema = new mongoose.Schema(
 
 messageSchema.index({ from: 1, to: 1, createdAt: -1 });
 
-// messageSchema.post('save', async function (doc) {
-//   await doc.populate([
-//     { path: 'to', select: 'name id' },
-//     { path: 'from', select: 'name id' }
-//   ]);
-// });
+
 
 messageSchema.pre(/^find/, function (next) {
   this.populate({

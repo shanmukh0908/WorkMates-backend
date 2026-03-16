@@ -4,18 +4,6 @@ const User = require("../models/userModel")
 const AppError = require("../utils/appError");
 const mongoose = require("mongoose");
 
-// exports.createWorkMate = catchAsync(async (req,res,next)=>{
-//     const body = {...req.body,workMate:req?.user._id}
-//     console.log(body)
-//     const data = await WorkMate.create(body)
-//     res.status(201).json({
-//         status:'success',
-//         accessToken: res.locals?.accessToken || null,
-//         data
-//     })
-// })
-
-
 
 exports.createWorkMate = catchAsync(async (req, res, next) => {
   const session = await mongoose.startSession();
@@ -27,17 +15,17 @@ exports.createWorkMate = catchAsync(async (req, res, next) => {
       workMate: req.user._id,
     };
 
-    // 1️⃣ Create WorkMate (pre-save hook runs here)
+    //  Create WorkMate (pre-save hook runs here)
     const workMate = await WorkMate.create([body], { session });
 
-    // 2️⃣ Update User skills (avoid duplicates)
+    //  Update User skills (avoid duplicates)
     const updatedUser = await User.findByIdAndUpdate(
       req.user._id,
       { $addToSet: { skills: { $each: req.body.skills } } },
       { new: true, session }
     );
 
-    // 3️⃣ Commit transaction
+    //Commit transaction
     await session.commitTransaction();
     session.endSession();
 
@@ -85,18 +73,35 @@ exports.getAllWorkMates = catchAsync(async (req, res, next) => {
 
   let pipeline = [];
 
-  
-  pipeline.push({
-    $geoNear: {
+  const geoNearOptions = {
     near: {
       type: "Point",
       coordinates: [parseFloat(lng), parseFloat(lat)]
     },
     distanceField: "distanceFromUser",
     spherical: true,
-    distanceMultiplier: 0.001   // converts meters → km
+    distanceMultiplier: 0.001   // Converts the OUTPUT distance to km
+  };
+
+  if (distance) {
+    // MongoDB requires maxDistance to be in METERS. 
+    // If distance = 5 (km), we pass 5000 (meters).
+    geoNearOptions.maxDistance = parseFloat(distance) * 1000;
   }
-  });
+
+  pipeline.push({ $geoNear: geoNearOptions });
+
+  // pipeline.push({
+  //   $geoNear: {
+  //   near: {
+  //     type: "Point",
+  //     coordinates: [parseFloat(lng), parseFloat(lat)]
+  //   },
+  //   distanceField: "distanceFromUser",
+  //   spherical: true,
+  //   distanceMultiplier: 0.001   // converts meters → km
+  // }
+  // });
 
   let match = {};
 

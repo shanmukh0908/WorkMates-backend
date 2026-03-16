@@ -61,11 +61,15 @@ exports.signUp = catchAsync(async (req, res, next) => {
   }
 
   const newUser = await User.create(req.body);
+  let user  = {...newUser.toObject(),password:undefined}
+  
+  createSendTokens(req, res, user=newUser);
 
-  res.status(200).json({
-    status: "success",
-    data: { ...newUser.toObject(),password:undefined },
-  });
+  // res.status(200).json({
+  //   status: "success",
+  //   data: { ...newUser.toObject(),password:undefined },
+  // });
+
 });
 
 exports.logIn = catchAsync(async (req, res, next) => {

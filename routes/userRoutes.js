@@ -1,18 +1,19 @@
 const express = require('express')
-const {uploadImages,resizeImage}  = require('../utils/uploadImages')
 const userController = require('../controllers/userController') 
 const authController = require('../controllers/authController')
+const { getUploadSignature } = require('../utils/getUploadSignature');
 
 const router = express.Router()
 
-router.post('/signup',uploadImages,resizeImage,authController.signUp)
-router.post('/login',authController.logIn)
+router.post('/signup', authController.signUp)
+router.post('/login',  authController.logIn)
 router.post('/logout',authController.logOut)
 
 router.use(authController.protect)
 
+router.route("/cloudinary-signature").get(getUploadSignature) 
 router.get('/details',userController.getUser)
-router.patch('/details',uploadImages,resizeImage,userController.updateUserDetails)
+router.patch('/details',userController.updateUserDetails)
 router.patch('/emailpassword',userController.updateEmailPassWord)
 
 module.exports = router
