@@ -13,7 +13,8 @@ exports.getUploadSignature = catchAsync(async (req, res, next) => {
 
   const timestamp = Math.round(Date.now() / 1000);
   const folder = req.query.folder;
-  const transformationRule = "w_1200,c_limit";
+  // const transformationRule = "w_1200,c_limit";
+  const transformationRule = "w_1200,c_limit,f_auto,q_auto";
 
   const paramsToSign = {
     timestamp,
